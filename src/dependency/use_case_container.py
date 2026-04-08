@@ -1,8 +1,16 @@
+"""
+Use Case Container for dependency injection.
+
+This module provides the UseCaseContainer that manages all use case dependencies
+and their relationships with other containers.
+"""
+
 from dependency_injector import providers
-from dependency_injector.containers import DeclarativeContainer
+from dependency_injector.containers import DeclarativeContainer, copy
 
 from src.core.containers import BaseContainer
 from src.dependency.uow_container import UnitOfWorkContainer
+from src.modules.mr_analytics.usecase.fetch_mrs.impl import FetchMergeRequestsUseCase
 from src.modules.mr_analytics.usecase.process_mrs.impl import ProcessMergeRequestsUseCase
 from src.modules.mr_analytics.usecase.get_metrics.impl import GetMetricsUseCase
 from src.modules.mr_analytics.usecase.predict_risk.impl import PredictRiskUseCase
@@ -11,16 +19,21 @@ from src.modules.mr_analytics.usecase.analyze_burnout.impl import AnalyzeBurnout
 from src.modules.mr_analytics.application.services import MRAnalyticsService
 
 
-class UseCaseContainer(DeclarativeContainer):
+@copy(BaseContainer)
+class UseCaseContainer(BaseContainer):
+    """
+    Use Case Container that inherits from BaseContainer and UnitOfWorkContainer.
     
-    base = providers.DependenciesContainer(BaseContainer)
+    This container provides all use case implementations and their dependencies.
+    """
+    
     uow = providers.DependenciesContainer(UnitOfWorkContainer)
     
     analytics_service = providers.Factory(MRAnalyticsService)
     
     fetch_mrs_usecase = providers.Factory(
         FetchMergeRequestsUseCase,
-        vcs_client=base.vcs_client,
+        vcs_client=BaseContainer.vcs_client,
     )
     
     process_mrs_usecase = providers.Factory(

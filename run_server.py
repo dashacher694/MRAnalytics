@@ -1,13 +1,13 @@
 """
 Development server runner
 """
-import uvicorn
 from src.core.config import settings
 
-
 if __name__ == "__main__":
+    import uvicorn
+
     uvicorn.run(
-        "src.main:app",
+        "src.application:app",
         host=settings.server.host,
         port=settings.server.port,
         reload=True,

@@ -7,7 +7,7 @@ import plotly.express as px
 import asyncio
 from loguru import logger
 
-from src.core.factory import container
+from src.dependency.container import Container
 from src.core.logging import setup_logging
 
 setup_logging()
@@ -15,13 +15,14 @@ setup_logging()
 st.set_page_config(page_title="MR Analytics", page_icon="", layout="wide")
 
 # Initialize container
+container = Container()
 
 
 @st.cache_data(ttl=300)
 def load_data():
     """Load data from database (cached for 5 minutes)"""
     async def _load():
-        async with container.query_uow() as uow:
+        async with container.uow.query_uow() as uow:
             metrics = await uow.metrics_repository.get_all()
             return metrics
     

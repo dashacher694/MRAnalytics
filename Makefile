@@ -1,47 +1,47 @@
 .PHONY: install run dashboard api test lint format clean migrate migration-revision migration-down migration-history db-init
 
 install:
-	pip install -r requirements.txt
+	poetry install
 
 run:
-	python run_all.py
+	poetry run python run_all.py
 
 dashboard:
-	streamlit run dashboard.py
+	poetry run streamlit run dashboard.py
 
 api:
-	uvicorn src.api.app:app --reload --host 0.0.0.0 --port 8000
+	poetry run uvicorn src.api.app:app --reload --host 0.0.0.0 --port 8000
 
 # Database migration commands
 migrate:
-	alembic upgrade head
+	poetry run alembic upgrade head
 
 migration-revision:
-	alembic revision --autogenerate -m "$(MSG)"
+	poetry run alembic revision --autogenerate -m "$(MSG)"
 
 migration-down:
-	alembic downgrade -1
+	poetry run alembic downgrade -1
 
 migration-history:
-	alembic history
+	poetry run alembic history
 
 migration-current:
-	alembic current
+	poetry run alembic current
 
 db-init:
 	mkdir -p data
-	alembic upgrade head
+	poetry run alembic upgrade head
 
 test:
-	pytest tests/ -v --cov=src
+	poetry run pytest tests/ -v --cov=src
 
 lint:
-	ruff check src/
-	mypy src/
+	poetry run ruff check src/
+	poetry run mypy src/
 
 format:
-	black src/
-	ruff check --fix src/
+	poetry run black src/
+	poetry run ruff check --fix src/
 
 clean:
 	rm -rf data/*.db

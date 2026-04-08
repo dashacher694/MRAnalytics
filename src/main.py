@@ -1,6 +1,14 @@
 """
 Application entry point
 """
-from src.app_factory import create_app
+from src.core.config import settings
 
-app = create_app()
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "src.application:app",
+        host=settings.server.host,
+        port=settings.server.port,
+        reload=True,
+    )

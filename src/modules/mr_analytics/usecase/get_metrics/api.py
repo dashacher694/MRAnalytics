@@ -5,7 +5,7 @@ from dependency_injector.wiring import Provide, inject
 from starlette import status
 from loguru import logger
 
-from src.core.containers import Container
+from src.dependency.container import Container
 from src.modules.mr_analytics.usecase.get_metrics.impl import GetMetricsUseCase
 from src.modules.mr_analytics.usecase.get_metrics.command import GetMetricsRequest
 from src.modules.mr_analytics.infrastructure.query.dto import MRMetricsResponse, MRMetricsListResponse

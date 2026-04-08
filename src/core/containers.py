@@ -1,3 +1,10 @@
+"""
+Base containers for dependency injection.
+
+This module provides base containers for managing dependencies,
+including configurations, database, VCS clients and other core services.
+"""
+
 from dependency_injector.containers import DeclarativeContainer
 from dependency_injector.providers import Configuration, Singleton
 
@@ -7,6 +14,12 @@ from src.infrastructure.clients.gitlab import GitLabClient
 
 
 class BaseContainer(DeclarativeContainer):
+    """
+    Base dependency container.
+    
+    This container provides all necessary dependencies for the application,
+    including configurations, database, VCS clients and other core services.
+    """
     
     config = Configuration()
     config.from_dict(settings.model_dump())

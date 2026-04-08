@@ -65,6 +65,9 @@ class AppConfig(BaseSettings):
     server_host: str = Field(default="0.0.0.0", alias="SERVER_HOST")
     server_port: int = Field(default=8000, alias="SERVER_PORT")
     
+    # Documentation
+    enable_docs: bool = Field(default=True, alias="ENABLE_DOCS")
+    
     @property
     def server(self):
         """Server configuration object"""

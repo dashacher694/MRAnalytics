@@ -7,7 +7,7 @@ import sys
 from loguru import logger
 
 from src.core.logging import setup_logging
-from src.core.containers import Container
+from src.dependency.container import Container
 from src.core.config import settings
 from src.core.errors import MRAnalyticsException
 from src.db.connection import init_db
@@ -36,8 +36,8 @@ async def main():
             sys.exit(1)
         
         logger.info("[2/2] Calculating metrics and saving to database")
-        async with container.uow() as uow:
-            calc_usecase = container.calculate_metrics_usecase()
+        async with container.uow.persistence_uow() as uow:
+            calc_usecase = container.process_mrs_usecase()
             calc_usecase.uow = uow
             metrics = await calc_usecase.execute(mrs)
         
