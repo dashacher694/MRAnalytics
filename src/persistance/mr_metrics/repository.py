@@ -65,12 +65,21 @@ class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
     async def save_all(self, metrics: List[MRMetrics]) -> None:
         """Save multiple metrics"""
         for metric in metrics:
+            # Convert aware datetime to naive for database
+            created_at = metric.created_at
+            if created_at and created_at.tzinfo:
+                created_at = created_at.replace(tzinfo=None)
+            
+            merged_at = metric.merged_at
+            if merged_at and merged_at.tzinfo:
+                merged_at = merged_at.replace(tzinfo=None)
+            
             entity = MRMetricsEntity(
                 mr_iid=metric.mr_iid,
                 title=metric.title,
                 author=metric.author,
-                created_at=metric.created_at,
-                merged_at=metric.merged_at,
+                created_at=created_at,
+                merged_at=merged_at,
                 web_url=metric.web_url,
                 additions=metric.additions,
                 deletions=metric.deletions,

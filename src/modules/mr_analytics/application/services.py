@@ -2,7 +2,7 @@
 Application services for MR Analytics
 """
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from loguru import logger
 
 from src.modules.mr_analytics.domain.aggregate.model import MergeRequest, MRMetrics
@@ -17,8 +17,8 @@ class MRAnalyticsService:
             mr_iid=mr.iid,
             title=mr.title,
             author=mr.author,
-            created_at=mr.created_at or datetime.now(),
-            merged_at=mr.merged_at or datetime.now(),
+            created_at=mr.created_at or datetime.now(timezone.utc),
+            merged_at=mr.merged_at or datetime.now(timezone.utc),
             web_url=mr.web_url,
             additions=mr.additions,
             deletions=mr.deletions,
