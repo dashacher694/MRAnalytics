@@ -2,10 +2,20 @@
 Base use case classes to replace pymfdata dependencies
 """
 from abc import ABC, abstractmethod
+from typing import TypeVar, Generic
+
+UowType = TypeVar('UowType')
 
 
-class BaseUseCase(ABC):
+class BaseUseCase(Generic[UowType], ABC):
     """Base use case class"""
+    
+    def __init__(self, uow: UowType) -> None:
+        self._uow = uow
+    
+    @property
+    def uow(self) -> UowType:
+        return self._uow
     
     @abstractmethod
     async def invoke(self, request):

@@ -14,8 +14,13 @@ from src.core.config import settings
 
 class FetchMergeRequestsUseCase(BaseUseCase):
     
-    def __init__(self, vcs_client: GitLabClient):
+    def __init__(self, vcs_client, uow=None):
         self._vcs_client = vcs_client
+        self._uow = uow
+    
+    @property
+    def uow(self):
+        return self._uow
     
     @async_transactional(read_only=True)
     async def invoke(self, command: FetchMergeRequestsCommand) -> FetchMergeRequestsResponse:
@@ -35,9 +40,11 @@ class FetchMergeRequestsUseCase(BaseUseCase):
             
             vcs_mrs = []
             for mr_data in raw_mrs:
-                comments = await self._vcs_client.fetch_comments(mr_data['iid'])
-                approvals = await self._vcs_client.fetch_approvals(mr_data['iid'])
-                changes = await self._vcs_client.fetch_changes(mr_data['iid'])
+                # GitHub uses 'number', GitLab uses 'iid'
+                mr_id = mr_data.get('number') or mr_data.get('iid')
+                comments = await self._vcs_client.fetch_comments(mr_id)
+                reviews = await self._vcs_client.fetch_reviews(mr_id)  # GitHub uses reviews instead of approvals
+                changes = await self._vcs_client.fetch_changes(mr_id)
                 
                 comment_dtos = [
                     CommentData(
@@ -52,21 +59,23 @@ class FetchMergeRequestsUseCase(BaseUseCase):
                 approval_dtos = [
                     ApprovalData(
                         approver=a.get('user', {}).get('username', 'unknown'),
-                        approved_at=a.get('created_at', '')
+                        approved_at=a.get('submitted_at', a.get('created_at', ''))
                     )
-                    for a in approvals
+                    for a in reviews
                 ]
                 
-                additions = sum(change.get('additions', 0) for change in changes)
-                deletions = sum(change.get('deletions', 0) for change in changes)
+                # Handle changes format (GitHub returns dict with 'files' key)
+                files_list = changes.get('files', []) if isinstance(changes, dict) else changes
+                additions = sum(change.get('additions', 0) for change in files_list)
+                deletions = sum(change.get('deletions', 0) for change in files_list)
                 
                 vcs_mr = VCSMergeRequestData(
-                    iid=mr_data['iid'],
+                    iid=mr_id,  # Use mr_id (number for GitHub, iid for GitLab)
                     title=mr_data['title'],
                     author=mr_data.get('author', {}).get('username', 'unknown'),
                     created_at=mr_data.get('created_at', ''),
                     merged_at=mr_data.get('merged_at', ''),
-                    web_url=mr_data.get('web_url', ''),
+                    web_url=mr_data.get('web_url', mr_data.get('html_url', '')),
                     additions=additions,
                     deletions=deletions,
                     comments=comment_dtos,

@@ -10,10 +10,10 @@ from src.modules.mr_analytics.infrastructure.query.uow import QueryUnitOfWork
 from .command import GetMetricsRequest, GetMetricsResponse
 
 
-class GetMetricsUseCase(BaseUseCase):
+class GetMetricsUseCase(BaseUseCase[QueryUnitOfWork]):
     
-    def __init__(self, uow: QueryUnitOfWork):
-        self.uow = uow
+    def __init__(self, uow: QueryUnitOfWork) -> None:
+        self._uow = uow
     
     @async_transactional(read_only=True)
     async def invoke(self, request: GetMetricsRequest) -> GetMetricsResponse:

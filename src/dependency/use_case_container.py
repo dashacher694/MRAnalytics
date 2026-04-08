@@ -28,6 +28,7 @@ class UseCaseContainer(UnitOfWorkContainer):
     fetch_mrs_usecase = providers.Factory(
         FetchMergeRequestsUseCase,
         vcs_client=UnitOfWorkContainer.vcs_client,
+        uow=UnitOfWorkContainer.query_uow,
     )
     
     process_mrs_usecase = providers.Factory(

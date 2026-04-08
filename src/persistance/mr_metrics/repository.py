@@ -25,6 +25,11 @@ class MRMetricsRepository(ABC):
     async def get_by_date_range(self, start_date: datetime, end_date: datetime) -> List[MRMetrics]:
         """Get metrics by date range"""
         pass
+    
+    @abstractmethod
+    async def save_all(self, metrics: List[MRMetrics]) -> None:
+        """Save multiple metrics"""
+        pass
 
 
 class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
@@ -56,3 +61,26 @@ class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
         result = await self._session.execute(stmt)
         entities = result.scalars().all()
         return list(entities)
+    
+    async def save_all(self, metrics: List[MRMetrics]) -> None:
+        """Save multiple metrics"""
+        for metric in metrics:
+            entity = MRMetricsEntity(
+                mr_iid=metric.mr_iid,
+                title=metric.title,
+                author=metric.author,
+                created_at=metric.created_at,
+                merged_at=metric.merged_at,
+                web_url=metric.web_url,
+                additions=metric.additions,
+                deletions=metric.deletions,
+                time_to_merge=metric.time_to_merge,
+                review_rounds=metric.review_rounds,
+                comment_density=metric.comment_density,
+                formal_approval=metric.formal_approval,
+                response_time_hours=metric.response_time_hours,
+                num_comments=metric.num_comments,
+                num_approvals=metric.num_approvals
+            )
+            self._session.add(entity)
+        await self._session.flush()

@@ -5,20 +5,19 @@ from dependency_injector import providers
 from dependency_injector.containers import DeclarativeContainer, copy
 
 from src.core.containers import BaseContainer
+from src.modules.mr_analytics.infrastructure.persistence.uow import MRPersistenceUnitOfWork
 
 
 @copy(BaseContainer)
 class UnitOfWorkContainer(BaseContainer):
     """Container for Unit of Work instances"""
     
-    # For now, create minimal stubs to avoid import errors
-    # These will be implemented when the actual UoW classes are created
     persistence_uow = providers.Factory(
-        lambda engine: None,  # Stub implementation
+        MRPersistenceUnitOfWork,
         engine=BaseContainer.db_engine,
     )
     
     query_uow = providers.Factory(
-        lambda engine: None,  # Stub implementation  
+        MRPersistenceUnitOfWork,  # Use same UoW for now
         engine=BaseContainer.db_engine,
     )

@@ -11,10 +11,10 @@ from src.modules.mr_analytics.application.analytics_services import RiskPredicti
 from .command import PredictRiskRequest, PredictRiskResponse
 
 
-class PredictRiskUseCase(BaseUseCase):
+class PredictRiskUseCase(BaseUseCase[QueryUnitOfWork]):
     
-    def __init__(self, uow: QueryUnitOfWork):
-        self.uow = uow
+    def __init__(self, uow: QueryUnitOfWork) -> None:
+        self._uow = uow
     
     @async_transactional(read_only=True)
     async def invoke(self, request: PredictRiskRequest) -> PredictRiskResponse:

@@ -13,10 +13,10 @@ from src.modules.mr_analytics.usecase.process_mrs.command import ProcessMergeReq
 from src.modules.mr_analytics.infrastructure.dto import VCSMergeRequestData, ProcessedMergeRequestDTO, ProcessMergeRequestsResponse
 
 
-class ProcessMergeRequestsUseCase(BaseUseCase):
+class ProcessMergeRequestsUseCase(BaseUseCase[MRPersistenceUnitOfWork]):
     
     def __init__(self, uow: MRPersistenceUnitOfWork) -> None:
-        self.uow = uow
+        self._uow = uow
         self._analytics_service = MRAnalyticsService()
     
     @staticmethod
@@ -85,10 +85,12 @@ class ProcessMergeRequestsUseCase(BaseUseCase):
         
         metrics = []
         for mr in domain_mrs:
-            metric = self._analytics_service.calculate_metrics(mr)
+            metric = self._analytics_service.calculate_metrics_from_mr(mr)
             metrics.append(metric)
         
-        await self.uow.metrics_repository.save_all(metrics)
+        # Use UoW in async context to initialize repositories
+        async with self.uow:
+            await self.uow.metrics_repository.save_all(metrics)
         
         processed_dtos = [
             self._convert_domain_to_dto(mr) 

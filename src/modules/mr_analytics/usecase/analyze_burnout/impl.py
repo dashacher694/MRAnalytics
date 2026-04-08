@@ -10,10 +10,10 @@ from src.modules.mr_analytics.usecase.analyze_burnout.command import AnalyzeBurn
 from src.modules.mr_analytics.infrastructure.dto import ReviewerProfile as DTOReviewerProfile
 
 
-class AnalyzeBurnoutUseCase(BaseUseCase):
+class AnalyzeBurnoutUseCase(BaseUseCase[QueryUnitOfWork]):
     
-    def __init__(self, uow: QueryUnitOfWork):
-        self.uow = uow
+    def __init__(self, uow: QueryUnitOfWork) -> None:
+        self._uow = uow
     
     @async_transactional(read_only=True)
     async def invoke(self, request: AnalyzeBurnoutRequest) -> BurnoutResponse:
