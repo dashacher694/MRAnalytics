@@ -51,6 +51,7 @@ class MRMetrics:
     num_comments: int = 0
     num_approvals: int = 0
     # New fields for analytics
+    changes_requested: int = 0  # Number of times MR was sent back for changes
     risk_score: RiskScore = RiskScore.LOW
     suggested_reviewers: List[str] = field(default_factory=list)
     reviewer_burnout_index: float = 0.0

@@ -12,6 +12,7 @@ from src.dependency.uow_container import UnitOfWorkContainer
 from src.modules.mr_analytics.usecase.fetch_mrs.impl import FetchMergeRequestsUseCase
 from src.modules.mr_analytics.usecase.process_mrs.impl import ProcessMergeRequestsUseCase
 from src.modules.mr_analytics.usecase.get_metrics.impl import GetMetricsUseCase
+from src.modules.mr_analytics.usecase.get_revision_stats.impl import GetRevisionStatsUseCase
 from src.modules.mr_analytics.usecase.run_analysis.impl import RunAnalysisUseCase
 
 
@@ -38,6 +39,11 @@ class UseCaseContainer(UnitOfWorkContainer):
     
     get_metrics_usecase = providers.Factory(
         GetMetricsUseCase,
+        uow=UnitOfWorkContainer.query_uow,
+    )
+    
+    get_revision_stats_usecase = providers.Factory(
+        GetRevisionStatsUseCase,
         uow=UnitOfWorkContainer.query_uow,
     )
     

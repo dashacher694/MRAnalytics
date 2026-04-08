@@ -6,6 +6,7 @@ from dependency_injector.containers import DeclarativeContainer, copy
 
 from src.core.containers import BaseContainer
 from src.modules.mr_analytics.infrastructure.persistence.uow import MRPersistenceUnitOfWork
+from src.modules.mr_analytics.infrastructure.query.uow import QueryUnitOfWork
 
 
 @copy(BaseContainer)
@@ -18,6 +19,6 @@ class UnitOfWorkContainer(BaseContainer):
     )
     
     query_uow = providers.Factory(
-        MRPersistenceUnitOfWork,  # Use same UoW for now
+        QueryUnitOfWork,
         engine=BaseContainer.db_engine,
     )

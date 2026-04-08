@@ -63,7 +63,9 @@ class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
         return list(entities)
     
     async def save_all(self, metrics: List[MRMetrics]) -> None:
-        """Save multiple metrics"""
+        """Save multiple metrics using UPSERT to avoid duplicates"""
+        from sqlalchemy.dialects.postgresql import insert
+        
         for metric in metrics:
             # Convert aware datetime to naive for database
             created_at = metric.created_at
@@ -74,7 +76,8 @@ class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
             if merged_at and merged_at.tzinfo:
                 merged_at = merged_at.replace(tzinfo=None)
             
-            entity = MRMetricsEntity(
+            # Use UPSERT (ON CONFLICT UPDATE) to handle duplicates
+            stmt = insert(MRMetricsEntity).values(
                 mr_iid=metric.mr_iid,
                 title=metric.title,
                 author=metric.author,
@@ -89,7 +92,28 @@ class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
                 formal_approval=metric.formal_approval,
                 response_time_hours=metric.response_time_hours,
                 num_comments=metric.num_comments,
-                num_approvals=metric.num_approvals
+                num_approvals=metric.num_approvals,
+                changes_requested=metric.changes_requested
+            ).on_conflict_do_update(
+                index_elements=['mr_iid'],
+                set_=dict(
+                    title=metric.title,
+                    author=metric.author,
+                    created_at=created_at,
+                    merged_at=merged_at,
+                    web_url=metric.web_url,
+                    additions=metric.additions,
+                    deletions=metric.deletions,
+                    time_to_merge=metric.time_to_merge,
+                    review_rounds=metric.review_rounds,
+                    comment_density=metric.comment_density,
+                    formal_approval=metric.formal_approval,
+                    response_time_hours=metric.response_time_hours,
+                    num_comments=metric.num_comments,
+                    num_approvals=metric.num_approvals,
+                    changes_requested=metric.changes_requested
+                )
             )
-            self._session.add(entity)
+            
+            await self._session.execute(stmt)
         await self._session.flush()

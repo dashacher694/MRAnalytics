@@ -13,4 +13,5 @@ class QueryUnitOfWork(AsyncSQLAlchemyUnitOfWork):
     async def __aenter__(self):
         await super().__aenter__()
         
-        self.metrics_repository: MRMetricsQueryRepository = SQLAlchemyMRMetricsQueryRepository(self.session)
+        self.repository: MRMetricsQueryRepository = SQLAlchemyMRMetricsQueryRepository(self.session)
+        return self

@@ -29,6 +29,7 @@ class MRAnalyticsService:
             response_time_hours=self._calculate_response_time(mr),
             num_comments=len(mr.comments),
             num_approvals=len(mr.approvals),
+            changes_requested=self._calculate_changes_requested(mr),
         )
     
     def _calculate_time_to_merge(self, mr: MergeRequest) -> float | None:
@@ -68,6 +69,30 @@ class MRAnalyticsService:
             delta = first_comment.created_at - mr.created_at
             return delta.total_seconds() / 3600
         return None
+    
+    def _calculate_changes_requested(self, mr: MergeRequest) -> int:
+        """Calculate number of times MR was sent back for changes"""
+        if not mr.comments:
+            return 0
+        
+        # Count comments that indicate requested changes
+        changes_keywords = [
+            "requested changes",
+            "changes requested", 
+            "please fix",
+            "needs changes",
+            "request changes",
+            "change request"
+        ]
+        
+        changes_count = 0
+        for comment in mr.comments:
+            if comment.author != mr.author:  # Only count reviewer comments
+                comment_lower = comment.body.lower()
+                if any(keyword in comment_lower for keyword in changes_keywords):
+                    changes_count += 1
+        
+        return changes_count
     
     def batch_calculate_stats(self, mrs: List[MergeRequest]) -> Dict[str, Any]:
         """Calculate batch statistics for multiple MRs"""
