@@ -25,8 +25,10 @@ if settings.is_sqlite:
         echo=False
     )
 else:
+    # Convert postgresql:// to postgresql+asyncpg:// for async operations
+    async_db_url = settings.database_url.replace("postgresql://", "postgresql+asyncpg://")
     async_engine = create_async_engine(
-        settings.database_url,
+        async_db_url,
         echo=False,
         future=True,
         pool_pre_ping=True,

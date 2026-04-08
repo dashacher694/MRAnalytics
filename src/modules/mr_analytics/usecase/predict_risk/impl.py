@@ -2,8 +2,7 @@ from typing import List, Dict, Any
 from datetime import datetime, timedelta
 from loguru import logger
 
-from pymfdata.common.usecase import BaseUseCase
-from pymfdata.rdb.transaction import async_transactional
+from src.modules.seedwork.base_usecase import BaseUseCase, async_transactional
 
 from src.modules.mr_analytics.domain.aggregate.model import MRMetrics, RiskScore
 from src.modules.utils.errors import NotFoundError, BadRequestError

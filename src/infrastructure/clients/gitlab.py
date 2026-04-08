@@ -6,7 +6,8 @@ from datetime import datetime, timedelta
 from typing import List
 from loguru import logger
 
-from src.domain.models import MergeRequest, Comment
+from src.modules.mr_analytics.domain.aggregate.model import MergeRequest
+from src.modules.mr_analytics.domain.value_objects import Comment
 from src.infrastructure.clients.base import VCSClient
 from src.core.errors import APIError
 

@@ -1,12 +1,11 @@
 from typing import List, Dict, Any
 from loguru import logger
 
-from pymfdata.common.usecase import BaseUseCase
-from pymfdata.rdb.transaction import async_transactional
+from src.modules.seedwork.base_usecase import BaseUseCase, async_transactional
 
 from src.modules.mr_analytics.domain.aggregate.model import MRMetrics
 from src.modules.mr_analytics.infrastructure.query.uow import QueryUnitOfWork
-from src.modules.mr_analytics.application.analytics_services import BurnoutAnalyticsService, ReviewerProfile
+from src.modules.mr_analytics.application.analytics_services import BurnoutAnalyticsService
 from src.modules.mr_analytics.usecase.analyze_burnout.command import AnalyzeBurnoutRequest, BurnoutResponse
 from src.modules.mr_analytics.infrastructure.dto import ReviewerProfile as DTOReviewerProfile
 

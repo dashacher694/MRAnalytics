@@ -20,7 +20,7 @@ from sqlalchemy.orm import clear_mappers
 from starlette.requests import Request
 
 from src.dependency.container import Container
-from src.modules.mr_analytics.usecase.router import router
+from src.modules.mr_analytics.usecase import router
 from src.core.fastapi.error import init_error_handler
 from src.modules.mr_analytics.infrastructure.persistence.mapper import start_mapper
 from src.core.config import settings

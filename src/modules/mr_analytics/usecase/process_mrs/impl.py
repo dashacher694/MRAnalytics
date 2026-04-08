@@ -3,8 +3,7 @@ from datetime import datetime
 from uuid import uuid4
 from loguru import logger
 
-from pymfdata.common.usecase import BaseUseCase
-from pymfdata.rdb.transaction import async_transactional
+from src.modules.seedwork.base_usecase import BaseUseCase, async_transactional
 
 from src.modules.mr_analytics.domain.aggregate.model import MergeRequest, MRMetrics
 from src.modules.mr_analytics.domain.value_objects import Comment, Approval

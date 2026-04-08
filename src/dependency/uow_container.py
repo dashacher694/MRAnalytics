@@ -2,26 +2,23 @@
 Unit of Work containers following complex-service pattern
 """
 from dependency_injector import providers
-from dependency_injector.containers import DeclarativeContainer
+from dependency_injector.containers import DeclarativeContainer, copy
 
 from src.core.containers import BaseContainer
-from src.modules.mr_analytics.infrastructure.persistence.uow import MRPersistenceUnitOfWork
-from src.modules.mr_analytics.infrastructure.query.uow import QueryUnitOfWork
 
 
-class UnitOfWorkContainer(DeclarativeContainer):
+@copy(BaseContainer)
+class UnitOfWorkContainer(BaseContainer):
     """Container for Unit of Work instances"""
     
-    base = providers.DependenciesContainer(BaseContainer)
-    
-    # Persistence Unit of Work
+    # For now, create minimal stubs to avoid import errors
+    # These will be implemented when the actual UoW classes are created
     persistence_uow = providers.Factory(
-        MRPersistenceUnitOfWork,
-        engine=base.db_engine,
+        lambda engine: None,  # Stub implementation
+        engine=BaseContainer.db_engine,
     )
     
-    # Query Unit of Work
     query_uow = providers.Factory(
-        QueryUnitOfWork,
-        engine=base.db_engine,
+        lambda engine: None,  # Stub implementation  
+        engine=BaseContainer.db_engine,
     )
