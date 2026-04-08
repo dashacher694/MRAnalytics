@@ -46,6 +46,7 @@ def create_app(create_db: bool = False) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        nonlocal logger
         logger.info("Starting MR Analytics FastAPI Application..")
 
         # Initialize database

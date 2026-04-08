@@ -5,7 +5,7 @@ import sys
 from loguru import logger
 
 
-def setup_logging(level: str = "INFO") -> None:
+def setup_logging(level: str = "INFO"):
     """Configure application logging"""
     logger.remove()
     logger.add(
@@ -21,3 +21,4 @@ def setup_logging(level: str = "INFO") -> None:
         level="DEBUG",
         format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
     )
+    return logger
