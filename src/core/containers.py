@@ -30,6 +30,6 @@ class BaseContainer(DeclarativeContainer):
         GitLabClient,
         token=settings.token,
         base_url=settings.base_url,
-        project_id=settings.project_id,
+        project_id=settings.project_id or 0,
         timeout=settings.api_timeout,
     )

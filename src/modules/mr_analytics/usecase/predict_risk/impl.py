@@ -11,10 +11,10 @@ from src.modules.mr_analytics.application.analytics_services import RiskPredicti
 from .command import PredictRiskRequest, PredictRiskResponse
 
 
-class PredictRiskUseCase(BaseUseCase[QueryUnitOfWork]):
+class PredictRiskUseCase(BaseUseCase):
     
     def __init__(self, uow: QueryUnitOfWork):
-        self._uow = uow
+        self.uow = uow
     
     @async_transactional(read_only=True)
     async def invoke(self, request: PredictRiskRequest) -> PredictRiskResponse:
@@ -23,7 +23,7 @@ class PredictRiskUseCase(BaseUseCase[QueryUnitOfWork]):
         end_date = datetime.now()
         start_date = end_date - timedelta(days=days)
         
-        metrics = await self._uow.metrics_repository.get_by_date_range(start_date, end_date)
+        metrics = await self.uow.metrics_repository.get_by_date_range(start_date, end_date)
         
         for metric in metrics:
             metric.risk_score = RiskPredictionService.predict_risk(metric)

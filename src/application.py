@@ -20,8 +20,8 @@ from sqlalchemy.orm import clear_mappers
 from starlette.requests import Request
 
 from src.dependency.container import Container
-from src.modules.mr_analytics.usecase import router
 from src.core.fastapi.error import init_error_handler
+from src.core.fastapi.routes import add_routes
 from src.modules.mr_analytics.infrastructure.persistence.mapper import start_mapper
 from src.core.config import settings
 from src.db.connection import init_db
@@ -81,7 +81,7 @@ def create_app(create_db: bool = False) -> FastAPI:
     application.container = container
 
     # Include routers
-    application.include_router(router)
+    add_routes(application)
 
     # Add middleware
     application.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=origins)

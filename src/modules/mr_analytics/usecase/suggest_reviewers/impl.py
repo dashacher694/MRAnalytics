@@ -11,16 +11,16 @@ from .command import SuggestReviewersRequest, SuggestReviewersResponse
 from src.modules.mr_analytics.infrastructure.dto import ReviewerSuggestion, ReviewerProfile
 
 
-class SuggestReviewersUseCase(BaseUseCase[QueryUnitOfWork]):
+class SuggestReviewersUseCase(BaseUseCase):
     
     def __init__(self, uow: QueryUnitOfWork):
-        self._uow = uow
+        self.uow = uow
     
     @async_transactional(read_only=True)
     async def invoke(self, request: SuggestReviewersRequest) -> SuggestReviewersResponse:
         logger.info(f"Suggesting reviewers for MR {request.mr_iid}")
         
-        mr = await self._uow.metrics_repository.get_by_iid(request.mr_iid)
+        mr = await self.uow.metrics_repository.get_by_iid(request.mr_iid)
         if not mr:
             raise ValueError(f"MR {request.mr_iid} not found")
         

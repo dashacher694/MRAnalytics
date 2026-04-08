@@ -15,31 +15,34 @@ from src.core.errors import APIError
 class GitLabClient(VCSClient):
     """GitLab API client"""
     
-    def __init__(self, token: str, base_url: str, project_id: str, timeout: int = 30):
+    def __init__(self, token: str, base_url: str, project_id: int, timeout: int = 30):
         self.token = token
         self.base_url = base_url
         self.project_id = project_id
         self.timeout = timeout
         self.headers = {'PRIVATE-TOKEN': token}
     
-    async def fetch_merge_requests(self, days: int) -> List[MergeRequest]:
-        """Fetch closed MRs from GitLab"""
-        since_date = (datetime.now() - timedelta(days=days)).isoformat()
+    async def fetch_merge_requests(self, state: str = "merged", created_after: datetime = None, created_before: datetime = None) -> List[dict]:
+        """Fetch MRs from GitLab as raw dict data"""
+        params = {
+            'state': state,
+            'per_page': 20,
+            'page': 1,
+            'order_by': 'created_at',
+            'sort': 'desc'
+        }
+        
+        if created_after:
+            params['created_after'] = created_after.isoformat()
+        if created_before:
+            params['created_before'] = created_before.isoformat()
         
         mrs = []
         page = 1
-        per_page = 20
         
         while True:
+            params['page'] = page
             url = f"{self.base_url}/api/v4/projects/{self.project_id}/merge_requests"
-            params = {
-                'state': 'merged',
-                'updated_after': since_date,
-                'per_page': per_page,
-                'page': page,
-                'order_by': 'updated_at',
-                'sort': 'desc'
-            }
             
             try:
                 response = requests.get(url, headers=self.headers, params=params, timeout=self.timeout)
@@ -52,17 +55,7 @@ class GitLabClient(VCSClient):
             if not data:
                 break
             
-            for mr_data in data:
-                mr = MergeRequest(
-                    iid=mr_data['iid'],
-                    title=mr_data['title'],
-                    author=mr_data['author']['username'],
-                    created_at=mr_data['created_at'],
-                    merged_at=mr_data.get('merged_at'),
-                    web_url=mr_data['web_url'],
-                )
-                mrs.append(mr)
-            
+            mrs.extend(data)
             page += 1
             
             if page > 100:  # Safety limit
@@ -70,6 +63,65 @@ class GitLabClient(VCSClient):
         
         logger.info(f"Fetched {len(mrs)} MRs from GitLab")
         return mrs
+    
+    async def fetch_comments(self, mr_iid: int) -> List[dict]:
+        """Fetch comments for a specific MR"""
+        comments = []
+        try:
+            discussions_url = f"{self.base_url}/api/v4/projects/{self.project_id}/merge_requests/{mr_iid}/discussions"
+            response = requests.get(discussions_url, headers=self.headers, timeout=self.timeout)
+            response.raise_for_status()
+            
+            discussions = response.json()
+            for discussion in discussions:
+                for note in discussion.get('notes', []):
+                    if not note.get('system', False):
+                        comments.append(note)
+        except requests.RequestException as e:
+            logger.warning(f"Failed to fetch comments for MR !{mr_iid}: {e}")
+        
+        return comments
+    
+    async def fetch_approvals(self, mr_iid: int) -> List[dict]:
+        """Fetch approvals for a specific MR"""
+        approvals = []
+        try:
+            approvals_url = f"{self.base_url}/api/v4/projects/{self.project_id}/merge_requests/{mr_iid}/approvals"
+            response = requests.get(approvals_url, headers=self.headers, timeout=self.timeout)
+            response.raise_for_status()
+            
+            approvals_data = response.json()
+            approvals = approvals_data.get('approved_by', [])
+        except requests.RequestException as e:
+            logger.warning(f"Failed to fetch approvals for MR !{mr_iid}: {e}")
+        
+        return approvals
+    
+    async def fetch_changes(self, mr_iid: int) -> List[dict]:
+        """Fetch file changes for a specific MR"""
+        changes = []
+        try:
+            changes_url = f"{self.base_url}/api/v4/projects/{self.project_id}/merge_requests/{mr_iid}/changes"
+            response = requests.get(changes_url, headers=self.headers, timeout=self.timeout)
+            response.raise_for_status()
+            
+            changes_data = response.json()
+            
+            # Calculate additions/deletions from diff
+            for change in changes_data.get('changes', []):
+                diff = change.get('diff', '')
+                additions = diff.count('\n+') - diff.count('\n+++')
+                deletions = diff.count('\n-') - diff.count('\n---')
+                changes.append({
+                    'additions': max(0, additions),
+                    'deletions': max(0, deletions),
+                    'new_path': change.get('new_path', ''),
+                    'old_path': change.get('old_path', '')
+                })
+        except requests.RequestException as e:
+            logger.warning(f"Failed to fetch changes for MR !{mr_iid}: {e}")
+        
+        return changes
     
     async def fetch_mr_details(self, mr_iid: int) -> dict:
         """Fetch MR details: changes, comments, approvals"""
