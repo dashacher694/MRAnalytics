@@ -45,7 +45,7 @@ async def fetch_merge_requests(
     - 500 Internal Server Error: Внутренняя ошибка сервера.
     """
     
-    logger.info(f"API: Fetching MRs for last {days} days")
+    logger.info(f"API: Загрузка MR за последние {days} дней")
     
     command = FetchMergeRequestsCommand(days=days)
     result = await uc.invoke(command)

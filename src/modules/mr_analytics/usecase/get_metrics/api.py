@@ -44,7 +44,7 @@ async def get_metrics(
     - 500 Internal Server Error: Внутренняя ошибка сервера.
     """
     
-    logger.info(f"API: Getting metrics with filters: mr_iid={mr_iid}, author={author}, days={days}")
+    logger.info(f"API: Получение метрик с фильтрами: mr_iid={mr_iid}, author={author}, days={days}")
     
     request = GetMetricsRequest(mr_iid=mr_iid, author=author, days=days)
     result = await uc.invoke(request)

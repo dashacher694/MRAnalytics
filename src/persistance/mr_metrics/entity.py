@@ -1,6 +1,3 @@
-"""
-SQLAlchemy ORM Models (Persistence Layer)
-"""
 from datetime import datetime
 from sqlalchemy import Integer, String, Float, DateTime
 from sqlalchemy.orm import Mapped, mapped_column
@@ -10,7 +7,6 @@ from src.persistance.base import Base
 
 
 class MRMetricsEntity(Base, IdUuidMixin, TimestampMixin):
-    """ORM model for MR metrics"""
     
     __tablename__ = "metrics"
     

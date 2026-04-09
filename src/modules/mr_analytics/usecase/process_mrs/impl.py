@@ -76,7 +76,7 @@ class ProcessMergeRequestsUseCase(BaseUseCase[MRPersistenceUnitOfWork]):
     
     @async_transactional()
     async def invoke(self, command: ProcessMergeRequestsCommand) -> ProcessMergeRequestsResponse:
-        logger.info(f"Processing {len(command.mrs)} MRs from VCS")
+        logger.info(f"Обработка {len(command.mrs)} MR из VCS")
         
         domain_mrs = [
             self._convert_vcs_to_domain(vcs_data) 
@@ -88,16 +88,15 @@ class ProcessMergeRequestsUseCase(BaseUseCase[MRPersistenceUnitOfWork]):
             metric = self._analytics_service.calculate_metrics_from_mr(mr)
             metrics.append(metric)
         
-        # Use UoW in async context to initialize repositories
         async with self.uow:
-            await self.uow.metrics_repository.save_all(metrics)
+            await self.uow.metrics_repository.create_all(metrics)
         
         processed_dtos = [
             self._convert_domain_to_dto(mr) 
             for mr in domain_mrs
         ]
         
-        logger.success(f"Processed and saved {len(metrics)} metrics")
+        logger.success(f"Обработано и сохранено {len(metrics)} метрик")
         
         return ProcessMergeRequestsResponse(
             processed_mrs=processed_dtos,

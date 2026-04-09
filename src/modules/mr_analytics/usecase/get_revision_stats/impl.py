@@ -17,7 +17,7 @@ class GetRevisionStatsUseCase(BaseUseCase[QueryUnitOfWork]):
     
     @async_transactional(read_only=True)
     async def invoke(self, request: GetRevisionStatsRequest) -> GetRevisionStatsResponse:
-        logger.info(f"Getting revision stats for last {request.days} days")
+        logger.info(f"Получение статистики ревизий за последние {request.days} дней")
         
         end_date = datetime.now()
         start_date = end_date - timedelta(days=request.days)

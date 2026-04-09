@@ -37,7 +37,7 @@ async def predict_risk(
     - 500 Internal Server Error: Внутренняя ошибка сервера.
     """
     
-    logger.info(f"API: Risk prediction request for {days} days")
+    logger.info(f"API: Запрос прогнозирования рисков на {days} дней")
     
     result = await uc.invoke(days)
     return result

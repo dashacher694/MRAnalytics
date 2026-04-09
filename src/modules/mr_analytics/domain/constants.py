@@ -1,0 +1,53 @@
+from .enums import MRState
+
+
+class RiskThresholds:
+    HIGH_RISK_THRESHOLD = 3
+    MEDIUM_RISK_THRESHOLD = 2
+    
+    LINES_CHANGED_THRESHOLD = 1000
+    COMMENT_DENSITY_THRESHOLD = 0.1
+    RESPONSE_TIME_THRESHOLD = 24
+    REVIEW_ROUNDS_THRESHOLD = 5
+
+
+class ReviewerScoring:
+    EXPERTISE_WEIGHT = 10
+    EXPERTISE_MATCH = 0.5
+    
+    RESPONSE_TIME_WEIGHT = 5
+    RESPONSE_TIME_HOURS = 24
+    
+    QUALITY_WEIGHT = 5
+    
+    WORKLOAD_WEIGHT = 3
+    WORKLOAD_MAX_REVIEWS = 10
+    
+    TOP_REVIEWERS_LIMIT = 3
+
+
+class BurnoutThresholds:
+    MAX_ACTIVE_MRS = 10
+    ANOMALY_STD_DEVIATIONS = 2
+    HIGH_RISK_THRESHOLD = 0.8
+
+
+class ValidationLimits:
+    MIN_DAYS = 1
+    MAX_DAYS = 365
+
+
+class TimeConstants:
+    SECONDS_PER_HOUR = 3600
+
+
+class ComplexityScoring:
+    LINES_CHANGED_DIVISOR = 100
+    COMMENTS_DIVISOR = 10
+    APPROVALS_DIVISOR = 5
+    
+    LINES_WEIGHT = 0.5
+    COMMENTS_WEIGHT = 0.3
+    APPROVALS_WEIGHT = 0.2
+    
+    DEFAULT_AUTHORS_LIMIT = 10

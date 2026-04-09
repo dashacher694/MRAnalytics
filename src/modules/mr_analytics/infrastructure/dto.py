@@ -1,6 +1,3 @@
-"""
-Common DTO models for VCS data and analytics
-"""
 from typing import List, Dict, Any, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field
@@ -32,38 +29,38 @@ class VCSMergeRequestData(BaseModel):
 
 
 class ReviewerProfile(BaseModel):
-    name: str = Field(..., description="Reviewer name")
-    expert_files: List[str] = Field(default_factory=list, description="Files reviewer is expert in")
-    avg_response_time_hours: float = Field(..., description="Average response time in hours")
-    quality_score: float = Field(..., description="Quality score (0-1)")
-    open_reviews_count: int = Field(default=0, description="Currently open reviews")
-    last_week_avg_response_time: float = Field(..., description="Last week avg response time")
-    prev_week_avg_response_time: float = Field(..., description="Previous week avg response time")
-    last_week_avg_comment_length: int = Field(default=0, description="Last week avg comment length")
-    prev_week_avg_comment_length: int = Field(default=0, description="Previous week avg comment length")
-    pending_reviews_count: int = Field(default=0, description="Pending reviews count")
+    name: str = Field(...)
+    expert_files: List[str] = Field(default_factory=list)
+    avg_response_time_hours: float = Field(...)
+    quality_score: float = Field(...)
+    open_reviews_count: int = Field(default=0)
+    last_week_avg_response_time: float = Field(...)
+    prev_week_avg_response_time: float = Field(...)
+    last_week_avg_comment_length: int = Field(default=0)
+    prev_week_avg_comment_length: int = Field(default=0)
+    pending_reviews_count: int = Field(default=0)
 
 
 class ReviewerSuggestion(BaseModel):
-    reviewer: str = Field(..., description="Reviewer name")
-    score: float = Field(..., description="Compatibility score")
-    reasoning: str = Field(..., description="Reasoning for suggestion")
+    reviewer: str = Field(...)
+    score: float = Field(...)
+    reasoning: str = Field(...)
 
 
 class ProcessedMergeRequestDTO(BaseModel):
-    iid: int = Field(..., description="IID Merge Request")
-    title: str = Field(..., description="Title MR")
-    author: str = Field(..., description="Author MR")
-    created_at: datetime = Field(..., description="Date creation MR")
-    merged_at: datetime = Field(..., description="Date merge MR")
-    web_url: str = Field(..., description="URL MR")
-    additions: int = Field(..., description="Lines added")
-    deletions: int = Field(..., description="Lines deleted")
-    num_comments: int = Field(..., description="Count comments")
-    num_approvals: int = Field(..., description="Count approvals")
-    total_lines_changed: int = Field(..., description="Total lines changed")
+    iid: int = Field(...)
+    title: str = Field(...)
+    author: str = Field(...)
+    created_at: datetime = Field(...)
+    merged_at: datetime = Field(...)
+    web_url: str = Field(...)
+    additions: int = Field(...)
+    deletions: int = Field(...)
+    num_comments: int = Field(...)
+    num_approvals: int = Field(...)
+    total_lines_changed: int = Field(...)
 
 
 class ProcessMergeRequestsResponse(BaseModel):
-    processed_mrs: List[ProcessedMergeRequestDTO] = Field(..., description="List of processed MRs")
-    total_processed: int = Field(..., description="Total count processed")
+    processed_mrs: List[ProcessedMergeRequestDTO] = Field(...)
+    total_processed: int = Field(...)

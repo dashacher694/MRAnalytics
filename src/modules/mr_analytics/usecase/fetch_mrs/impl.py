@@ -10,6 +10,7 @@ from src.modules.mr_analytics.usecase.fetch_mrs.command import (
     FetchMergeRequestsResponse
 )
 from src.core.config import settings
+from src.modules.mr_analytics.domain.enums import MRState
 
 
 class FetchMergeRequestsUseCase(BaseUseCase):
@@ -24,26 +25,25 @@ class FetchMergeRequestsUseCase(BaseUseCase):
     
     @async_transactional(read_only=True)
     async def invoke(self, command: FetchMergeRequestsCommand) -> FetchMergeRequestsResponse:
-        logger.info(f"Fetching MRs from {settings.vcs_provider.value} for last {command.days} days")
+        logger.info(f"Загрузка MR из {settings.vcs_provider.value} за последние {command.days} дней")
         
         end_date = datetime.now()
         start_date = end_date - timedelta(days=command.days)
         
         try:
             raw_mrs = await self._vcs_client.fetch_merge_requests(
-                state="merged",
+                state=MRState.MERGED.value,
                 created_after=start_date,
                 created_before=end_date
             )
             
-            logger.info(f"Fetched {len(raw_mrs)} MRs from VCS")
+            logger.info(f"Получено {len(raw_mrs)} MR из VCS")
             
             vcs_mrs = []
             for mr_data in raw_mrs:
-                # GitHub uses 'number', GitLab uses 'iid'
                 mr_id = mr_data.get('number') or mr_data.get('iid')
                 comments = await self._vcs_client.fetch_comments(mr_id)
-                reviews = await self._vcs_client.fetch_reviews(mr_id)  # GitHub uses reviews instead of approvals
+                reviews = await self._vcs_client.fetch_reviews(mr_id)
                 changes = await self._vcs_client.fetch_changes(mr_id)
                 
                 comment_dtos = [
@@ -64,13 +64,12 @@ class FetchMergeRequestsUseCase(BaseUseCase):
                     for a in reviews
                 ]
                 
-                # Handle changes format (GitHub returns dict with 'files' key)
-                files_list = changes.get('files', []) if isinstance(changes, dict) else changes
+                files_list = changes.get('files', []) if type(changes) is dict else changes
                 additions = sum(change.get('additions', 0) for change in files_list)
                 deletions = sum(change.get('deletions', 0) for change in files_list)
                 
                 vcs_mr = VCSMergeRequestData(
-                    iid=mr_id,  # Use mr_id (number for GitHub, iid for GitLab)
+                    iid=mr_id,
                     title=mr_data['title'],
                     author=mr_data.get('author', {}).get('username', 'unknown'),
                     created_at=mr_data.get('created_at', ''),
@@ -83,7 +82,7 @@ class FetchMergeRequestsUseCase(BaseUseCase):
                 )
                 vcs_mrs.append(vcs_mr)
             
-            logger.success(f"Successfully fetched and converted {len(vcs_mrs)} MRs")
+            logger.success(f"Успешно получено и преобразовано {len(vcs_mrs)} MR")
             
             return FetchMergeRequestsResponse(
                 mrs=vcs_mrs,
@@ -91,5 +90,5 @@ class FetchMergeRequestsUseCase(BaseUseCase):
             )
             
         except Exception as e:
-            logger.error(f"Error fetching MRs from VCS: {e}")
+            logger.error(f"Ошибка при загрузке MR из VCS: {e}")
             raise

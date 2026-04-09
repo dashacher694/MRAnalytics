@@ -38,7 +38,7 @@ async def suggest_reviewers(
     - 500 Internal Server Error: Внутренняя ошибка сервера.
     """
     
-    logger.info(f"API: Suggesting reviewers for MR !{request.mr_iid}")
+    logger.info(f"API: Предложение ревьюеров для MR {request.mr_iid}")
     
     result = await uc.invoke(request)
     return result

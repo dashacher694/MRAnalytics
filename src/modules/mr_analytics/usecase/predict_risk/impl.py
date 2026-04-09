@@ -4,11 +4,13 @@ from loguru import logger
 
 from src.modules.seedwork.base_usecase import BaseUseCase, async_transactional
 
-from src.modules.mr_analytics.domain.aggregate.model import MRMetrics, RiskScore
+from src.modules.mr_analytics.domain.aggregate.model import MRMetrics
+from src.modules.mr_analytics.domain.enums import RiskScore
 from src.modules.utils.errors import NotFoundError, BadRequestError
 from src.modules.mr_analytics.infrastructure.query.uow import QueryUnitOfWork
 from src.modules.mr_analytics.application.analytics_services import RiskPredictionService, AnomalyDetectionService
 from .command import PredictRiskRequest, PredictRiskResponse
+from src.modules.mr_analytics.domain.constants import BurnoutThresholds
 
 
 class PredictRiskUseCase(BaseUseCase[QueryUnitOfWork]):
@@ -18,10 +20,10 @@ class PredictRiskUseCase(BaseUseCase[QueryUnitOfWork]):
     
     @async_transactional(read_only=True)
     async def invoke(self, request: PredictRiskRequest) -> PredictRiskResponse:
-        logger.info(f"Predicting risk for MRs in last {days} days")
+        logger.info(f"Прогнозирование рисков для MR за последние {request.days} дней")
         
         end_date = datetime.now()
-        start_date = end_date - timedelta(days=days)
+        start_date = end_date - timedelta(days=request.days)
         
         metrics = await self.uow.metrics_repository.get_by_date_range(start_date, end_date)
         
@@ -43,7 +45,7 @@ class PredictRiskUseCase(BaseUseCase[QueryUnitOfWork]):
             "low": low_risk
         }
         
-        logger.info(f"Risk prediction completed. High risk: {high_risk}, Anomalies: {anomalies_count}")
+        logger.info(f"Прогнозирование рисков завершено. Высокий риск: {high_risk}, Аномалии: {anomalies_count}")
         
         return PredictRiskResponse(
             total_analyzed=len(metrics),
