@@ -1,5 +1,3 @@
-"""Use cases"""
-
 from fastapi import APIRouter
 
 router = APIRouter(

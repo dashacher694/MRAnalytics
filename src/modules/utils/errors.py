@@ -1,8 +1,3 @@
-"""
-Simple domain exceptions like in calendar_service
-"""
-
-
 class NotFoundError(Exception):
     pass
 

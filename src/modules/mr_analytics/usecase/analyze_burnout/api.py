@@ -22,21 +22,6 @@ async def analyze_burnout(
     request: AnalyzeBurnoutRequest,
     uc: AnalyzeBurnoutUseCase = Depends(Provide[Container.analyze_burnout_usecase]),
 ):
-    """
-    # Анализирует выгорание ревьюеров.
-
-    Метод для анализа индекса выгорания команды ревьюеров.
-
-    ___
-
-    #### Успешный ответ:
-    Отдает 200 с результатами анализа выгорания
-
-    #### Ошибки:
-    - 400 Bad Request: Некорректный запрос или неверный формат данных.
-    - 500 Internal Server Error: Внутренняя ошибка сервера.
-    """
-    
     logger.info("API: Начало анализа выгорания")
     
     result = await uc.invoke(request)

@@ -22,22 +22,6 @@ async def suggest_reviewers(
     request: SuggestReviewersRequest,
     uc: SuggestReviewersUseCase = Depends(Provide[Container.suggest_reviewers_usecase]),
 ):
-    """
-    # Предлагает ревьюеров для Merge Request.
-
-    Метод для получения предложений ревьюеров на основе анализа MR.
-
-    ___
-
-    #### Успешный ответ:
-    Отдает 200 со списком предложенных ревьюеров
-
-    #### Ошибки:
-    - 400 Bad Request: Некорректный запрос или неверный формат данных.
-    - 404 Not Found: MR с указанным IID не найден.
-    - 500 Internal Server Error: Внутренняя ошибка сервера.
-    """
-    
     logger.info(f"API: Предложение ревьюеров для MR {request.mr_iid}")
     
     result = await uc.invoke(request)

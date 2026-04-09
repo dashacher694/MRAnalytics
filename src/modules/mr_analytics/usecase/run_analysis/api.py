@@ -1,6 +1,3 @@
-"""
-Комплексный API эндпоинт для автоматического сбора и анализа MR
-"""
 from fastapi import APIRouter, Depends
 from dependency_injector.wiring import Provide, inject
 from starlette import status

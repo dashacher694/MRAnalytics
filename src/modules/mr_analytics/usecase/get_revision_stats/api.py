@@ -21,7 +21,6 @@ async def get_revision_stats(
     author: str = Query(default=None, description="Filter by specific author"),
     uc: GetRevisionStatsUseCase = Depends(Provide[Container.get_revision_stats_usecase]),
 ):
-    """Get revision statistics for MRs"""
     request = GetRevisionStatsRequest(days=days, author=author)
     result = await uc.invoke(request)
     return result

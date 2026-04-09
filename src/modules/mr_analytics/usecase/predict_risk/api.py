@@ -21,22 +21,6 @@ async def predict_risk(
     days: int = Query(default=30, ge=1, le=365, description="Days to analyze"),
     uc: PredictRiskUseCase = Depends(Provide[Container.predict_risk_usecase]),
 ):
-    """
-    # Прогнозирует риски Merge Request.
-
-    Метод для анализа MR и прогнозирования рисков.
-
-    ___
-
-    #### Успешный ответ:
-    Отдает 200 с результатами прогнозирования рисков
-
-    #### Ошибки:
-    - 400 Bad Request: Некорректный запрос или неверный формат данных.
-    - 404 Not Found: Отсутствуют метрики за указанный период.
-    - 500 Internal Server Error: Внутренняя ошибка сервера.
-    """
-    
     logger.info(f"API: Запрос прогнозирования рисков на {days} дней")
     
     result = await uc.invoke(days)

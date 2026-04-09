@@ -41,5 +41,4 @@ class MRMetricsRepository(AsyncRepository[MRMetrics, int]):
 
 
 class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
-    """SQLAlchemy implementation of MRMetricsRepository"""
     pass

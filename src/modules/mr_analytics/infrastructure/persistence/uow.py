@@ -7,8 +7,6 @@ from src.modules.mr_analytics.infrastructure.persistence.impl.repository import 
 
 
 class BaseAsyncUnitOfWork(ABC):
-    """Base Unit of Work interface"""
-    
     @abstractmethod
     async def __aenter__(self) -> "BaseAsyncUnitOfWork":
         pass
@@ -27,8 +25,6 @@ class BaseAsyncUnitOfWork(ABC):
 
 
 class AsyncSQLAlchemyUnitOfWork(BaseAsyncUnitOfWork):
-    """Async SQLAlchemy Unit of Work implementation"""
-    
     def __init__(self, engine: AsyncEngine) -> None:
         self._engine = engine
         self._sessionmaker = async_sessionmaker(
@@ -57,8 +53,6 @@ class AsyncSQLAlchemyUnitOfWork(BaseAsyncUnitOfWork):
 
 
 class MRPersistenceUnitOfWork(AsyncSQLAlchemyUnitOfWork):
-    """MR-specific Unit of Work"""
-    
     def __init__(self, engine: AsyncEngine) -> None:
         super().__init__(engine)
     

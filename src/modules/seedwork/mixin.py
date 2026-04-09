@@ -1,6 +1,3 @@
-"""
-Seedwork module with common mixins and utilities
-"""
 import datetime
 from uuid import uuid4
 

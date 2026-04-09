@@ -44,7 +44,6 @@ class GetRevisionStatsUseCase(BaseUseCase[QueryUnitOfWork]):
         mrs_without_changes = total_mrs - mrs_with_changes
         total_changes = sum(m.changes_requested for m in metrics)
         
-        # Calculate author-specific stats
         author_stats = {}
         for metric in metrics:
             if metric.author not in author_stats:
@@ -59,7 +58,6 @@ class GetRevisionStatsUseCase(BaseUseCase[QueryUnitOfWork]):
             if metric.changes_requested > 0:
                 author_stats[metric.author]['mrs_with_changes'] += 1
         
-        # Calculate rates for each author
         for author_data in author_stats.values():
             if author_data['total_mrs'] > 0:
                 author_data['changes_requested_rate'] = (
