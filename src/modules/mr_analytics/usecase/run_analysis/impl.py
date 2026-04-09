@@ -27,25 +27,25 @@ class RunAnalysisUseCase(BaseUseCase):
         fetch_result = await self._fetch_uc.invoke(fetch_command)
         
         if not fetch_result.mrs:
-            logger.warning("No MRs found for the specified period")
+            logger.warning("MR не найдены за указанный период")
             return RunAnalysisResponse(
                 status="completed",
                 fetched_count=0,
                 processed_count=0,
                 processed_mrs=[],
-                message="No MRs found for the specified period"
+                message="MR не найдены за указанный период"
             )
         
-        logger.success(f"Fetched {fetch_result.total_fetched} MRs from VCS")
+        logger.success(f"Получено {fetch_result.total_fetched} MR из VCS")
         
-        logger.info("[2/2] Processing MRs and calculating metrics...")
+        logger.info("[2/2] Обработка MR и расчет метрик...")
         process_command = ProcessMergeRequestsCommand(mrs=fetch_result.mrs)
         process_result = await self._process_uc.invoke(process_command)
         
-        logger.success(f"Processed and saved {process_result.total_processed} MRs")
+        logger.success(f"Обработано и сохранено {process_result.total_processed} MR")
         
         logger.info("=" * 60)
-        logger.success("Full analysis completed successfully!")
+        logger.success("Полный анализ успешно завершен!")
         logger.info("=" * 60)
         
         return RunAnalysisResponse(

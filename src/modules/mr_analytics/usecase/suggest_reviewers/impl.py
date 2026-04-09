@@ -18,11 +18,11 @@ class SuggestReviewersUseCase(BaseUseCase[QueryUnitOfWork]):
     
     @async_transactional(read_only=True)
     async def invoke(self, request: SuggestReviewersRequest) -> SuggestReviewersResponse:
-        logger.info(f"Suggesting reviewers for MR {request.mr_iid}")
+        logger.info(f"Предложение ревьюеров для MR {request.mr_iid}")
         
         mr = await self.uow.metrics_repository.get_by_iid(request.mr_iid)
         if not mr:
-            raise ValueError(f"MR {request.mr_iid} not found")
+            raise ValueError(f"MR {request.mr_iid} не найден")
         
         profiles = []
         for profile_data in request.team_profiles:

@@ -1,7 +1,9 @@
 """MR Analytics module"""
 from .domain.aggregate.model import MergeRequest, MRMetrics
 from .domain.value_objects import Comment, Approval, ReviewRound
+from .domain.enums import RiskScore, MRState
 from .application.services import MRAnalyticsService
+from .infrastructure.persistence.mapper import start_mapper
 from .infrastructure import (
     MRMetricsRepository,
     SQLAlchemyMRMetricsRepository,
@@ -13,7 +15,6 @@ from .infrastructure import (
     MRAnalyticsSummaryDTO,
     AuthorStatsDTO,
 )
-from .infrastructure.persistence.mapper import start_mapper
 
 __all__ = [
     # Domain models
@@ -24,6 +25,10 @@ __all__ = [
     "Comment",
     "Approval", 
     "ReviewRound",
+    
+    # Enums
+    "RiskScore",
+    "MRState",
     
     # Application services
     "MRAnalyticsService",

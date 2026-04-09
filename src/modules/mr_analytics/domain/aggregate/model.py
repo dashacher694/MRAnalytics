@@ -1,15 +1,9 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List
-from enum import Enum
 
 from src.modules.mr_analytics.domain.value_objects import Comment, Approval
-
-
-class RiskScore(Enum):
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
+from src.modules.mr_analytics.domain.enums import RiskScore
 
 
 @dataclass
@@ -24,10 +18,9 @@ class MergeRequest:
     deletions: int = 0
     comments: List[Comment] = field(default_factory=list)
     approvals: List[Approval] = field(default_factory=list)
-    # New fields for analytics
     changed_files: List[str] = field(default_factory=list)
-    author_mr_count: int = 0  # Previous MR count
-    creation_hour: int = 0  # 0-23
+    author_mr_count: int = 0
+    creation_hour: int = 0
     is_critical_files: bool = False
     unique_reviewers: List[str] = field(default_factory=list)
     risk_score: RiskScore = RiskScore.LOW
@@ -50,8 +43,7 @@ class MRMetrics:
     response_time_hours: float | None = None
     num_comments: int = 0
     num_approvals: int = 0
-    # New fields for analytics
-    changes_requested: int = 0  # Number of times MR was sent back for changes
+    changes_requested: int = 0
     risk_score: RiskScore = RiskScore.LOW
     suggested_reviewers: List[str] = field(default_factory=list)
     reviewer_burnout_index: float = 0.0

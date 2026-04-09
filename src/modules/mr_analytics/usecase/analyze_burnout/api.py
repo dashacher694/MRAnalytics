@@ -37,7 +37,7 @@ async def analyze_burnout(
     - 500 Internal Server Error: Внутренняя ошибка сервера.
     """
     
-    logger.info("API: Starting burnout analysis")
+    logger.info("API: Начало анализа выгорания")
     
     result = await uc.invoke(request)
     return result

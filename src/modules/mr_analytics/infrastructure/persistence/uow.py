@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
-from src.persistance.mr_metrics.repository import MRMetricsRepository, SQLAlchemyMRMetricsRepository
+from src.persistance.mr_metrics.repository import MRMetricsRepository
+from src.modules.mr_analytics.infrastructure.persistence.impl.repository import MRMetricsRepositoryImpl
 
 
 class BaseAsyncUnitOfWork(ABC):
@@ -63,5 +64,5 @@ class MRPersistenceUnitOfWork(AsyncSQLAlchemyUnitOfWork):
     
     async def __aenter__(self) -> "MRPersistenceUnitOfWork":
         await super().__aenter__()
-        self.metrics_repository = SQLAlchemyMRMetricsRepository(self.session)
+        self.metrics_repository = MRMetricsRepositoryImpl(self.session)
         return self

@@ -36,7 +36,7 @@ async def process_mrs(
     - 500 Internal Server Error: Внутренняя ошибка сервера.
     """
     
-    logger.info(f"API: Processing {len(command.mrs)} MRs")
+    logger.info(f"API: Обработка {len(command.mrs)} MR")
     
     result = await uc.invoke(command)
     return result
