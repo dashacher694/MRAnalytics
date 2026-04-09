@@ -29,6 +29,7 @@ class MRMetricsEntity(Base, IdUuidMixin, TimestampMixin):
     response_time_hours: Mapped[float | None] = mapped_column(Float, nullable=True)
     num_comments: Mapped[int] = mapped_column(Integer, default=0)
     num_approvals: Mapped[int] = mapped_column(Integer, default=0)
+    changes_requested: Mapped[int] = mapped_column(Integer, default=0)
     
     def __repr__(self) -> str:
         return f"<MRMetrics(mr_iid={self.mr_iid}, author={self.author}, title='{self.title[:30]}...', risk_score={getattr(self, 'risk_score', 'N/A')})>"

@@ -33,7 +33,7 @@ class AppConfig(BaseSettings):
     vcs_provider: VCSProvider = Field(default=VCSProvider.GITLAB)
     gitlab_token: str | None = Field(default=None, alias="GITLAB_TOKEN")
     gitlab_url: str = Field(default="https://gitlab.com", alias="GITLAB_URL")
-    project_id: str | None = Field(default=None, alias="PROJECT_ID")
+    project_id: int | None = Field(default=None, alias="PROJECT_ID")
     
     github_token: str | None = Field(default=None, alias="GITHUB_TOKEN")
     github_repo: str | None = Field(default=None, alias="GITHUB_REPO")
@@ -86,6 +86,13 @@ class AppConfig(BaseSettings):
         if self.vcs_provider == VCSProvider.GITLAB:
             return self.gitlab_url
         return "https://api.github.com"
+    
+    @property
+    def project_id_value(self) -> str:
+        """Get project_id as string for GitLab API"""
+        if self.project_id is None:
+            return "None"
+        return str(self.project_id)
 
 
 settings = AppConfig()

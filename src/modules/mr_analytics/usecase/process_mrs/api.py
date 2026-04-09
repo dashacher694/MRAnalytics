@@ -5,10 +5,9 @@ from starlette import status
 from loguru import logger
 
 from src.dependency.container import Container
+router = APIRouter()
 from src.modules.mr_analytics.usecase.process_mrs.impl import ProcessMergeRequestsUseCase
 from src.modules.mr_analytics.usecase.process_mrs.command import ProcessMergeRequestsCommand
-
-router = APIRouter()
 
 
 @router.post(

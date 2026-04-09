@@ -9,7 +9,7 @@ from src.dependency.container import Container
 from src.modules.mr_analytics.usecase.get_metrics.impl import GetMetricsUseCase
 from src.modules.mr_analytics.usecase.get_metrics.command import GetMetricsRequest
 from src.modules.mr_analytics.infrastructure.query.dto import MRMetricsResponse, MRMetricsListResponse
-from src.modules.mr_analytics.usecase import router
+router = APIRouter()
 
 
 @router.get(

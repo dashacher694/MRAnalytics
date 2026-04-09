@@ -25,6 +25,11 @@ class MRMetricsRepository(ABC):
     async def get_by_date_range(self, start_date: datetime, end_date: datetime) -> List[MRMetrics]:
         """Get metrics by date range"""
         pass
+    
+    @abstractmethod
+    async def save_all(self, metrics: List[MRMetrics]) -> None:
+        """Save multiple metrics"""
+        pass
 
 
 class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
@@ -56,3 +61,59 @@ class SQLAlchemyMRMetricsRepository(MRMetricsRepository):
         result = await self._session.execute(stmt)
         entities = result.scalars().all()
         return list(entities)
+    
+    async def save_all(self, metrics: List[MRMetrics]) -> None:
+        """Save multiple metrics using UPSERT to avoid duplicates"""
+        from sqlalchemy.dialects.postgresql import insert
+        
+        for metric in metrics:
+            # Convert aware datetime to naive for database
+            created_at = metric.created_at
+            if created_at and created_at.tzinfo:
+                created_at = created_at.replace(tzinfo=None)
+            
+            merged_at = metric.merged_at
+            if merged_at and merged_at.tzinfo:
+                merged_at = merged_at.replace(tzinfo=None)
+            
+            # Use UPSERT (ON CONFLICT UPDATE) to handle duplicates
+            stmt = insert(MRMetricsEntity).values(
+                mr_iid=metric.mr_iid,
+                title=metric.title,
+                author=metric.author,
+                created_at=created_at,
+                merged_at=merged_at,
+                web_url=metric.web_url,
+                additions=metric.additions,
+                deletions=metric.deletions,
+                time_to_merge=metric.time_to_merge,
+                review_rounds=metric.review_rounds,
+                comment_density=metric.comment_density,
+                formal_approval=metric.formal_approval,
+                response_time_hours=metric.response_time_hours,
+                num_comments=metric.num_comments,
+                num_approvals=metric.num_approvals,
+                changes_requested=metric.changes_requested
+            ).on_conflict_do_update(
+                index_elements=['mr_iid'],
+                set_=dict(
+                    title=metric.title,
+                    author=metric.author,
+                    created_at=created_at,
+                    merged_at=merged_at,
+                    web_url=metric.web_url,
+                    additions=metric.additions,
+                    deletions=metric.deletions,
+                    time_to_merge=metric.time_to_merge,
+                    review_rounds=metric.review_rounds,
+                    comment_density=metric.comment_density,
+                    formal_approval=metric.formal_approval,
+                    response_time_hours=metric.response_time_hours,
+                    num_comments=metric.num_comments,
+                    num_approvals=metric.num_approvals,
+                    changes_requested=metric.changes_requested
+                )
+            )
+            
+            await self._session.execute(stmt)
+        await self._session.flush()

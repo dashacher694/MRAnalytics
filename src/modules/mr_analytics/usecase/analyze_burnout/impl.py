@@ -12,7 +12,7 @@ from src.modules.mr_analytics.infrastructure.dto import ReviewerProfile as DTORe
 
 class AnalyzeBurnoutUseCase(BaseUseCase[QueryUnitOfWork]):
     
-    def __init__(self, uow: QueryUnitOfWork):
+    def __init__(self, uow: QueryUnitOfWork) -> None:
         self._uow = uow
     
     @async_transactional(read_only=True)
