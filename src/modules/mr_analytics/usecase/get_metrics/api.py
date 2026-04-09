@@ -26,24 +26,6 @@ async def get_metrics(
     days: int = Query(default=30, ge=1, le=365, description="Filter by last N days"),
     uc: GetMetricsUseCase = Depends(Provide[Container.get_metrics_usecase]),
 ) -> MRMetricsListResponse:
-    """
-    # Получает метрики Merge Request.
-
-    Метод для получения метрик Merge Request с возможностью фильтрации.
-
-    ___
-
-    #### Успешный ответ:
-    Отдает 200 с списком метрик MR в формате MRMetricsListResponse
-
-    #### Ошибки:
-    - 400 Bad Request: Некорректный запрос или неверный формат данных.
-    - 404 Not Found: MR с указанным IID не найден.
-    - 404 Not Found: Отсутствуют метрики для указанного автора.
-    - 404 Not Found: Отсутствуют метрики за указанный период.
-    - 500 Internal Server Error: Внутренняя ошибка сервера.
-    """
-    
     logger.info(f"API: Получение метрик с фильтрами: mr_iid={mr_iid}, author={author}, days={days}")
     
     request = GetMetricsRequest(mr_iid=mr_iid, author=author, days=days)

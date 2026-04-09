@@ -1,6 +1,3 @@
-"""
-Command for processing VCS Merge Requests
-"""
 from pydantic import BaseModel, Field
 from typing import List
 

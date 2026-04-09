@@ -1,6 +1,3 @@
-"""
-Advanced analytics services for MR analysis
-"""
 from typing import List, Dict, Any
 from datetime import datetime
 from dataclasses import dataclass

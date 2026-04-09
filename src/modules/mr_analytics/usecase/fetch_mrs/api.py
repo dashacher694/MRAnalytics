@@ -1,6 +1,3 @@
-"""
-API endpoints for fetching merge requests from VCS
-"""
 from fastapi import APIRouter, Depends
 from dependency_injector.wiring import Provide, inject
 from starlette import status
@@ -27,24 +24,6 @@ async def fetch_merge_requests(
     days: int = 30,
     uc: FetchMergeRequestsUseCase = Depends(Provide[Container.fetch_mrs_usecase]),
 ) -> FetchMergeRequestsResponse:
-    """
-    # Загружает Merge Requests из VCS.
-
-    Метод для загрузки MR из GitLab/GitHub за указанное количество дней.
-
-    ___
-
-    #### Параметры:
-    - **days**: Количество дней для анализа (по умолчанию 30)
-
-    #### Успешный ответ:
-    Отдает 200 со списком загруженных MR
-
-    #### Ошибки:
-    - 400 Bad Request: Некорректный запрос или неверный формат данных.
-    - 500 Internal Server Error: Внутренняя ошибка сервера.
-    """
-    
     logger.info(f"API: Загрузка MR за последние {days} дней")
     
     command = FetchMergeRequestsCommand(days=days)

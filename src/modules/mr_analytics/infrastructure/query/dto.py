@@ -31,7 +31,6 @@ class MRMetricsListResponse(BaseModel):
 
 
 class MRMetricsDTO(BaseModel):
-    """DTO for MRMetrics"""
     mr_iid: int = Field(..., description="MR IID")
     title: str = Field(..., description="Title")
     author: str = Field(..., description="Author")
@@ -50,7 +49,6 @@ class MRMetricsDTO(BaseModel):
 
 
 class MRAnalyticsSummaryDTO(BaseModel):
-    """DTO for MR analytics summary"""
     total_mrs: int = Field(..., description="Total MRs")
     avg_time_to_merge: float = Field(..., description="Average time to merge")
     avg_review_rounds: float = Field(..., description="Average review rounds")
@@ -59,7 +57,6 @@ class MRAnalyticsSummaryDTO(BaseModel):
 
 
 class AuthorStatsDTO(BaseModel):
-    """DTO for author statistics"""
     author: str = Field(..., description="Author name")
     mr_count: int = Field(..., description="Number of MRs")
     avg_time_to_merge: float = Field(..., description="Average time to merge")

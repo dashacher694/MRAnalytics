@@ -21,21 +21,6 @@ async def process_mrs(
     command: ProcessMergeRequestsCommand,
     uc: ProcessMergeRequestsUseCase = Depends(Provide[Container.process_mrs_usecase]),
 ):
-    """
-    # Обрабатывает Merge Requests.
-
-    Метод для обработки VCS Merge Request и расчета метрик.
-
-    ___
-
-    #### Успешный ответ:
-    Отдает 200 с результатами обработки MR
-
-    #### Ошибки:
-    - 400 Bad Request: Некорректный запрос или неверный формат данных.
-    - 500 Internal Server Error: Внутренняя ошибка сервера.
-    """
-    
     logger.info(f"API: Обработка {len(command.mrs)} MR")
     
     result = await uc.invoke(command)
