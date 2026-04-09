@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from pymfdata.rdb.repository import AsyncRepository
+from src.persistance.async_repository import AsyncRepository
 
 from src.modules.mr_analytics.domain.aggregate.model import MRMetrics
 
